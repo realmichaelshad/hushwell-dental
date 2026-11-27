@@ -1,0 +1,30 @@
+# Every push to main and every pull request: the type check, the unit tests and a production build.
+# The two browser checks (npm run qa and npm run e2e) need a running server and a Playwright
+# browser, so they are run by hand and are not part of this workflow.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Type check, unit tests and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Type check
+        run: npm run typecheck
+      - name: Unit tests
+        run: npm test
+      - name: Production build
+        run: npm run build
